@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 mongoose.set('useFindAndModify', false)
 
 const url = process.env.MONGODB_URI
 
-console.log('commecting to', url)
+console.log('connecting to', url)
 
 mongoose.connect(url, { useNewUrlParser: true })
   .then(result => {
@@ -15,9 +16,11 @@ mongoose.connect(url, { useNewUrlParser: true })
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String
+  name: { type: String, minlength: 3, required: true, unique: true},
+  number: { type: String, minlength: 8, required: true}
 })
+
+personSchema.plugin(uniqueValidator)
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
